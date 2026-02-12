@@ -37,23 +37,20 @@ class _Custom_ListViewState extends State<Custom_ListView> {
           Stack(
             textDirection: TextDirection.rtl,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProductDetails(product: food),
-                      ),
-                    );
-                  },
-                  child: Image.network(
-                    food.imageUrl,
-                    width: 90,
-                    height: 90,
-                    fit: BoxFit.cover,
-                  ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetails(product: food),
+                    ),
+                  );
+                },
+                child: Image.network(
+                  food.imageUrl,
+                  width: 90,
+                  height: 90,
+                  fit: BoxFit.cover,
                 ),
               ),
               IconButton(
