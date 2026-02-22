@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../food_model.dart';
+import '../models/food_model.dart';
+import '../cubits/food/food_cubit.dart';
+import '../cubits/cart/cart_cubit.dart';
 import 'product_details.dart';
 
-class Custom_ListView extends StatefulWidget {
+class Custom_ListView extends StatelessWidget {
   const Custom_ListView({super.key});
 
   @override
-  State<Custom_ListView> createState() => _Custom_ListViewState();
-}
-
-class _Custom_ListViewState extends State<Custom_ListView> {
-  @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: FoodModel.sampleFoods.length,
-      itemBuilder: (context, index) {
-        return _foodCard(FoodModel.sampleFoods[index]);
+    return BlocBuilder<FoodCubit, FoodState>(
+      builder: (context, state) {
+        return ListView.builder(
+          itemCount: state.foods.length,
+          itemBuilder: (context, index) {
+            return _foodCard(context, state.foods[index]);
+          },
+        );
       },
     );
   }
 
-  Widget _foodCard(FoodModel food) {
+  Widget _foodCard(BuildContext context, FoodModel food) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -42,7 +44,7 @@ class _Custom_ListViewState extends State<Custom_ListView> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProductDetails(product: food),
+                      builder: (context) => ProductDetails(title: food.title),
                     ),
                   );
                 },
@@ -57,9 +59,7 @@ class _Custom_ListViewState extends State<Custom_ListView> {
                 padding: EdgeInsets.zero,
                 constraints: BoxConstraints(),
                 onPressed: () {
-                  setState(() {
-                    food.isFavorite = !food.isFavorite;
-                  });
+                  context.read<FoodCubit>().toggleFavorite(food);
                 },
                 icon: Icon(
                   food.isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -104,7 +104,9 @@ class _Custom_ListViewState extends State<Custom_ListView> {
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                context.read<CartCubit>().addItem(food);
+              },
               child: const Text("Add to Cart"),
             ),
           ),

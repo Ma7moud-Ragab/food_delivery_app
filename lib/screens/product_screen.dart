@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../food_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../cubits/food/food_cubit.dart';
+import '../cubits/cart/cart_cubit.dart';
 import 'grid_view.dart';
 import 'list_view.dart';
 
@@ -18,15 +21,48 @@ class _ProductScreenState extends State<ProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Food Delivery",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 12),
-            child: Icon(Icons.shopping_cart, color: Colors.black),
+            padding: const EdgeInsets.only(right: 12),
+            child: BlocBuilder<CartCubit, CartState>(
+              builder: (context, state) {
+                return Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    const Icon(Icons.shopping_cart, color: Colors.black),
+                    if (state.items.isNotEmpty)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 16,
+                            minHeight: 16,
+                          ),
+                          child: Text(
+                            state.items.length.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -38,37 +74,39 @@ class _ProductScreenState extends State<ProductScreen> {
             TextField(
               decoration: InputDecoration(
                 hintText: "Search for food",
-                prefixIcon: Icon(Icons.search, color: Colors.red),
+                prefixIcon: const Icon(Icons.search, color: Colors.red),
                 filled: true,
-                fillColor: Color.fromARGB(255, 248, 200, 200),
+                fillColor: const Color.fromARGB(255, 248, 200, 200),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide.none,
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
+            // carousel built from bloc state
             SizedBox(
               height: 160,
-              child: CarouselView.weighted(
-                flexWeights: const [4, 1],
-                itemSnapping: true,
-                children: [
-                  _carouselItem(FoodModel.sampleFoods[0].imageUrl),
-                  _carouselItem(FoodModel.sampleFoods[1].imageUrl),
-                  _carouselItem(FoodModel.sampleFoods[2].imageUrl),
-                  _carouselItem(FoodModel.sampleFoods[3].imageUrl),
-                ],
+              child: BlocBuilder<FoodCubit, FoodState>(
+                builder: (context, state) {
+                  return CarouselView.weighted(
+                    flexWeights: const [4, 1],
+                    itemSnapping: true,
+                    children: state.foods
+                        .map((f) => _carouselItem(f.imageUrl))
+                        .toList(),
+                  );
+                },
               ),
             ),
 
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
               "Featured Items",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             Row(
               children: [
@@ -103,7 +141,7 @@ class _ProductScreenState extends State<ProductScreen> {
               ),
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
           ],
         ),
       ),

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'home_screen.dart';
+import 'cubits/food/food_cubit.dart';
+import 'cubits/cart/cart_cubit.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -11,6 +14,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: HomeScreen());
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => FoodCubit()),
+        BlocProvider(create: (_) => CartCubit()),
+      ],
+      child: MaterialApp(debugShowCheckedModeBanner: false, home: HomeScreen()),
+    );
   }
 }

@@ -28,7 +28,6 @@ class FoodModel {
     this.discount = 0,
     this.taxRate = 0.1,
     this.deliveryFee = 20,
-
   });
 
   double get subTotal => price * quantity;
@@ -38,6 +37,40 @@ class FoodModel {
   double get taxAmount => (subTotal - discountAmount) * taxRate;
 
   double get total => subTotal - discountAmount + taxAmount + deliveryFee;
+
+  /// Returns a copy of this model with the given fields replaced.
+  FoodModel copyWith({
+    String? title,
+    String? imageUrl,
+    double? price,
+    double? rating,
+    int? preparationTime,
+    int? calories,
+    String? description,
+    List<String>? ingredients,
+    bool? isFavorite,
+    int? quantity,
+    double? discount,
+    double? taxRate,
+    double? deliveryFee,
+  }) {
+    return FoodModel(
+      title: title ?? this.title,
+      imageUrl: imageUrl ?? this.imageUrl,
+      price: price ?? this.price,
+      rating: rating ?? this.rating,
+      preparationTime: preparationTime ?? this.preparationTime,
+      calories: calories ?? this.calories,
+      description: description ?? this.description,
+      ingredients: ingredients ?? this.ingredients,
+      isFavorite: isFavorite ?? this.isFavorite,
+      quantity: quantity ?? this.quantity,
+      discount: discount ?? this.discount,
+      taxRate: taxRate ?? this.taxRate,
+      deliveryFee: deliveryFee ?? this.deliveryFee,
+    );
+  }
+
   static List<FoodModel> sampleFoods = [
     FoodModel(
       title: "Burger",
